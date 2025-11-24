@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Opportunity Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="description"
+        content="Analyze market gaps and business opportunities with AI-powered competitor insights.">
+    <meta property="og:title" content="Business Opportunity Finder">
+    <meta property="og:description"
+        content="Analyze market gaps and business opportunities with AI-powered competitor insights.">
+    <meta property="og:url" content="https://biz.sound.fan">
+    <meta property="og:type" content="website">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --danger: #ef4444;
+            --warning: #eab308;
+            --success: #22c55e;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--accent), #818cf8);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .search-box {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            background: #020617;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1.1rem;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        button {
+            background: var(--accent);
+            color: #0f172a;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            align-self: flex-end;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #results {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .summary-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .summary-card h2 {
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .heatmap-container {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            font-weight: 500;
+        }
+
+        .competitor-name {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .competitor-link {
+            font-size: 0.8rem;
+            color: var(--accent);
+            text-decoration: none;
+            margin-top: 0.2rem;
+        }
+
+        .competitor-link:hover {
+            text-decoration: underline;
+        }
+
+        .score-cell {
+            text-align: center;
+            font-weight: 700;
+            border-radius: 0.5rem;
+            color: #0f172a;
+            /* Dark text for contrast on colored bg */
+        }
+
+        .score-1,
+        .score-2 {
+            background-color: rgba(239, 68, 68, 0.8);
+            /* Red */
+        }
+
+        .score-3 {
+            background-color: rgba(234, 179, 8, 0.8);
+            /* Yellow */
+        }
+
+        .score-4,
+        .score-5 {
+            background: rgba(34, 197, 94, 0.8);
+            color: #fff;
+        }
+
+        /* Reviews Section */
+        .reviews-container {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .reviews-header h2 {
+            color: var(--accent);
+            margin: 0;
+        }
+
+        .review-count {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: normal;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background: var(--accent);
+            color: #0f172a;
+            border-color: var(--accent);
+        }
+
+        .reviews-content {
+            margin-top: 1.5rem;
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .business-reviews {
+            background: #020617;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+        }
+
+        .business-reviews h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .review-item {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 3px solid var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .review-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-rating {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .review-user {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .review-text {
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .review-date {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Personas Section */
+        .personas-container {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        .personas-container h2 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .personas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .persona-card {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.05), rgba(129, 140, 248, 0.05));
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .persona-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, var(--accent), #818cf8);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .persona-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(56, 189, 248, 0.15);
+            border-color: var(--accent);
+        }
+
+        .persona-card:hover::before {
+            opacity: 1;
+        }
+
+        .persona-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .persona-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+            flex-shrink: 0;
+        }
+
+        .persona-title {
+            flex: 1;
+        }
+
+        .persona-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .persona-demographic {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .persona-section {
+            margin-bottom: 1rem;
+        }
+
+        .persona-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .persona-section-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .persona-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .persona-list li {
+            padding-left: 1.2rem;
+            margin-bottom: 0.4rem;
+            position: relative;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+        }
+
+        .persona-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .pain-point {
+            background: rgba(239, 68, 68, 0.1);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border-left: 3px solid var(--danger);
+            margin-bottom: 0.5rem;
+        }
+
+        .pain-point:last-child {
+            margin-bottom: 0;
+        }
+
+        .pain-point-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .pain-point-quote {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--border);
+        }
+
+        .pain-point-quote::before {
+            content: '"';
+        }
+
+        .pain-point-quote::after {
+            content: '"';
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            justify-content: flex-end;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Business Opportunity Finder</h1>
+            <p class="subtitle">Analyze market gaps with AI-powered competitor insights</p>
+        </header>
+
+        <div class="search-box">
+            <textarea id="queryInput"
+                placeholder="e.g., Would a high speed coffee shop work in Williamsburg?"></textarea>
+            <button id="analyzeBtn">Analyze Market</button>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Analyzing competitors and identifying market gaps...</p>
+        </div>
+
+        <div id="results">
+            <div class="summary-card">
+                <h2>Market Analysis Summary</h2>
+                <p id="summaryText"></p>
+            </div>
+
+            <div class="heatmap-container">
+                <h2>Competitor Weakness Heatmap</h2>
+                <table id="heatmapTable">
+                    <thead>
+                        <!-- Dynamic Headers -->
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(239, 68, 68, 0.8)"></div>
+                        <span>Weakness (1-2)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(234, 179, 8, 0.8)"></div>
+                        <span>Average (3)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(34, 197, 94, 0.8)"></div>
+                        <span>Strength (4-5)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personas Section -->
+            <div class="personas-container" id="personasContainer" style="display: none;">
+                <h2>Customer Personas</h2>
+                <div class="personas-grid" id="personasGrid">
+                    <!-- Dynamic persona cards will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="reviews-container" id="reviewsContainer" style="display: none;">
+                <div class="reviews-header" onclick="toggleReviews()">
+                    <h2>Customer Reviews <span class="review-count"></span></h2>
+                    <button class="toggle-btn" id="toggleBtn">Show Reviews ▼</button>
+                </div>
+                <div class="reviews-content" id="reviewsContent" style="display: none;">
+                    <!-- Dynamic reviews will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const queryInput = document.getElementById('queryInput');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const summaryText = document.getElementById('summaryText');
+        const heatmapTable = document.getElementById('heatmapTable');
+
+        analyzeBtn.addEventListener('click', async () => {
+            const query = queryInput.value.trim();
+            if (!query) return;
+
+            // Reset UI
+            results.style.display = 'none';
+            loading.style.display = 'block';
+            analyzeBtn.disabled = true;
+
+            try {
+                // Use localhost for local development, otherwise use production URL
+                const apiUrl = window.location.hostname === 'localhost'
+                    ? 'http://localhost:3000/analyze'
+                    : 'https://business-opportunity-finder-79171523011.us-central1.run.app/analyze';
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ query })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Analysis failed');
+                }
+
+                const data = await response.json();
+                renderResults(data);
+
+            } catch (error) {
+                alert('An error occurred while analyzing the market. Please try again.');
+                console.error(error);
+            } finally {
+                loading.style.display = 'none';
+                analyzeBtn.disabled = false;
+            }
+        });
+
+        function renderResults(data) {
+            // 1. Render Summary
+            summaryText.textContent = data.summary;
+
+            // 2. Render Heatmap Headers
+            const thead = heatmapTable.querySelector('thead');
+            thead.innerHTML = '';
+            const headerRow = document.createElement('tr');
+
+            // Competitor Name Column
+            const nameHeader = document.createElement('th');
+            nameHeader.textContent = 'Competitor';
+            headerRow.appendChild(nameHeader);
+
+            // Criteria Columns
+            data.criteria.forEach(criterion => {
+                const th = document.createElement('th');
+                th.textContent = criterion.label;
+                th.title = criterion.description; // Tooltip
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+
+            // 3. Render Heatmap Rows
+            const tbody = heatmapTable.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            data.competitors.forEach(competitor => {
+                const row = document.createElement('tr');
+
+                // Name Cell
+                const nameCell = document.createElement('td');
+                nameCell.innerHTML = `
+                    <div class="competitor-name">
+                        <span>${competitor.name}</span>
+                        <a href="${competitor.yelpUrl}" target="_blank" class="competitor-link">View on Yelp &rarr;</a>
+                    </div>
+                `;
+                row.appendChild(nameCell);
+
+                // Score Cells
+                data.criteria.forEach(criterion => {
+                    const cell = document.createElement('td');
+                    const score = competitor.scores[criterion.id];
+
+                    cell.textContent = score;
+                    cell.className = `score-cell score-${Math.floor(score)}`; // Use floor to handle decimals if any, though we rounded in backend
+
+                    row.appendChild(cell);
+                });
+
+                tbody.appendChild(row);
+            });
+
+            // Render reviews if available
+            if (data.reviews) {
+                renderReviews(data.reviews, data.competitors);
+            }
+
+            // Render personas if available
+            console.log('Full data object:', data);
+            console.log('data.personas:', data.personas);
+            if (data.personas && data.personas.length > 0) {
+                console.log('Calling renderPersonas with:', data.personas);
+                renderPersonas(data.personas);
+            } else {
+                console.log('Personas not rendered - no personas data');
+            }
+
+            results.style.display = 'block';
+        }
+
+        async function renderPersonas(personas) {
+            const container = document.getElementById('personasContainer');
+            const grid = document.getElementById('personasGrid');
+
+            if (!personas || personas.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            grid.innerHTML = '';
+
+            for (let i = 0; i < personas.length; i++) {
+                const persona = personas[i];
+                const avatarUrl = await createPersonaAvatar(persona, i);
+
+                const personaCard = document.createElement('div');
+                personaCard.className = 'persona-card';
+
+                personaCard.innerHTML = `
+                    <div class="persona-header">
+                        <img src="${avatarUrl}" alt="${persona.name}" class="persona-avatar">
+                        <div class="persona-title">
+                            <div class="persona-name">${persona.name}</div>
+                            <div class="persona-demographic">${persona.demographic}</div>
+                        </div>
+                    </div>
+
+                    ${persona.goals && persona.goals.length > 0 ? `
+                    <div class="persona-section">
+                        <div class="persona-section-title">Goals & Motivations</div>
+                        <ul class="persona-list">
+                            ${persona.goals.map(goal => `<li>${goal}</li>`).join('')}
+                        </ul>
+                    </div>
+                    ` : ''}
+
+                    ${persona.painPoints && persona.painPoints.length > 0 ? `
+                    <div class="persona-section">
+                        <div class="persona-section-title">Pain Points</div>
+                        ${persona.painPoints.map(pp => `
+                            <div class="pain-point">
+                                <div class="pain-point-label">${pp.point}</div>
+                                <div class="pain-point-quote">${pp.quote}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+
+                    ${persona.preferences && persona.preferences.length > 0 ? `
+                    <div class="persona-section">
+                        <div class="persona-section-title">Preferences</div>
+                        <ul class="persona-list">
+                            ${persona.preferences.map(pref => `<li>${pref}</li>`).join('')}
+                        </ul>
+                    </div>
+                    ` : ''}
+                `;
+
+                grid.appendChild(personaCard);
+            }
+
+            container.style.display = 'block';
+        }
+
+        async function createPersonaAvatar(persona, index) {
+            // Use a color scheme based on index
+            const colors = ['#38bdf8', '#818cf8', '#a78bfa', '#fb7185', '#34d399'];
+            const color = colors[index % colors.length];
+
+            // Create a simple initial-based avatar using SVG (fallback approach without API call)
+            const initial = persona.name.charAt(0);
+            const svg = `data:image/svg+xml,${encodeURIComponent(`
+                <svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="30" cy="30" r="30" fill="${color}"/>
+                    <text x="30" y="40" font-family="Outfit, sans-serif" font-size="24" font-weight="600" 
+                          text-anchor="middle" fill="white">${initial}</text>
+                </svg>
+            `)}`;
+
+            return svg;
+        }
+
+        function toggleReviews() {
+            const content = document.getElementById('reviewsContent');
+            const btn = document.getElementById('toggleBtn');
+
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                btn.textContent = 'Hide Reviews ▲';
+            } else {
+                content.style.display = 'none';
+                btn.textContent = 'Show Reviews ▼';
+            }
+        }
+
+        function renderReviews(reviews, competitors) {
+            const container = document.getElementById('reviewsContainer');
+            const content = document.getElementById('reviewsContent');
+            const countSpan = container.querySelector('.review-count');
+
+            if (!reviews || Object.keys(reviews).length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            let totalReviews = 0;
+            let reviewsHTML = '';
+
+            // Map business IDs to competitor names from the reviews object
+            Object.keys(reviews).forEach(businessId => {
+                const businessReviews = reviews[businessId];
+                if (businessReviews.length > 0) {
+                    totalReviews += businessReviews.length;
+
+                    // Find the competitor name by matching the business ID directly
+                    const competitor = competitors.find(c => c.id === businessId);
+                    const businessName = competitor ? competitor.name : 'Unknown Business';
+
+                    reviewsHTML += `
+                        <div class="business-reviews">
+                            <h3>${businessName}</h3>
+                            ${businessReviews.map(review => `
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <span class="review-rating">${'⭐'.repeat(review.rating)}</span>
+                                        <span class="review-user">${review.user?.name || 'Anonymous'}</span>
+                                    </div>
+                                    <div class="review-text">${review.text}</div>
+                                    <div class="review-date">${review.time_created ? new Date(review.time_created).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Date unavailable'}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            });
+
+            countSpan.textContent = `(${totalReviews} reviews analyzed)`;
+            content.innerHTML = reviewsHTML;
+            container.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

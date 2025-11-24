@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Personas Test</title>
+</head>
+
+<body>
+    <h1>Testing Personas API</h1>
+    <button id="testBtn">Test API</button>
+    <div id="output"></div>
+
+    <script>
+        document.getElementById('testBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('http://localhost:3000/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: 'coffee shop in williamsburg' })
+                });
+
+                const data = await response.json();
+
+                const output = document.getElementById('output');
+                output.innerHTML = '<h2>API Response:</h2><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+
+                console.log('Full data:', data);
+                console.log('Has personas:', 'personas' in data);
+                console.log('Personas:', data.personas);
+                console.log('Personas length:', data.personas ? data.personas.length : 'N/A');
+            } catch (error) {
+                document.getElementById('output').innerHTML = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+
+</html>

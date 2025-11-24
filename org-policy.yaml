@@ -1,0 +1,6 @@
+constraint: constraints/iam.allowedPolicyMemberDomains
+listPolicy:
+  allowedValues:
+    - C0111e5a4
+    - allUsers
+    - allAuthenticatedUsers

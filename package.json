@@ -1,0 +1,22 @@
+{
+  "name": "business-opportunity-finder",
+  "version": "1.0.0",
+  "description": "A minimal full stack web app to identify market gaps using Yelp data.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "deploy:fe": "firebase deploy --only hosting",
+    "deploy:be": "./deploy.sh",
+    "deploy": "npm run deploy:fe && npm run deploy:be"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  }
+}
