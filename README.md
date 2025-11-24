@@ -2,7 +2,7 @@
 
 An AI-powered market analysis tool that helps entrepreneurs identify business opportunities by analyzing local competitors, customer reviews, and market gaps.
 
-![App Screenshot](https://via.placeholder.com/800x400?text=Business+Opportunity+Finder+Screenshot)
+![App Screenshot](app-screenshot.png)
 
 ## ✨ Features
 
