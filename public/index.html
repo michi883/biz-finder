@@ -255,8 +255,8 @@
             color: #fff;
         }
 
-        /* Reviews Section */
-        .reviews-container {
+        /* Collapsible Sections */
+        .collapsible-section {
             background: var(--card-bg);
             padding: 2rem;
             border-radius: 1rem;
@@ -264,23 +264,25 @@
             margin-top: 2rem;
         }
 
-        .reviews-header {
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
             user-select: none;
+            margin-bottom: 0;
         }
 
-        .reviews-header h2 {
+        .section-header h2 {
             color: var(--accent);
             margin: 0;
         }
 
-        .review-count {
+        .section-count {
             font-size: 0.9rem;
             color: var(--text-secondary);
             font-weight: normal;
+            margin-left: 0.5rem;
         }
 
         .toggle-btn {
@@ -291,12 +293,32 @@
             border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 0.9rem;
         }
 
         .toggle-btn:hover {
             background: var(--accent);
             color: #0f172a;
             border-color: var(--accent);
+        }
+
+        .section-content {
+            margin-top: 1.5rem;
+        }
+
+        /* Reviews Section */
+        .reviews-container {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        .review-count {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: normal;
         }
 
         .reviews-content {
@@ -539,6 +561,185 @@
             height: 12px;
             border-radius: 50%;
         }
+
+        /* Follow-up Question Section */
+        .followup-container {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        .followup-container h2 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .followup-intro {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .followup-input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .followup-textarea {
+            width: 100%;
+            background: #020617;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 80px;
+            transition: all 0.2s;
+        }
+
+        .followup-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .followup-textarea:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: #0f172a;
+        }
+
+        .followup-btn {
+            background: var(--accent);
+            color: #0f172a;
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            align-self: flex-start;
+        }
+
+        .followup-btn:hover:not(:disabled) {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .followup-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .followup-loading {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+
+        .followup-loading.active {
+            display: flex;
+        }
+
+        .followup-spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .followup-answer {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.05), rgba(129, 140, 248, 0.05));
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 0.75rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+
+        .followup-answer.active {
+            display: block;
+        }
+
+        .followup-answer-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+
+        .followup-answer-text {
+            font-size: 0.95rem;
+        }
+
+        .answer-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .answer-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .answer-section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .answer-section-content {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+
+        .answer-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .answer-list li {
+            padding: 0.75rem 0 0.75rem 1.5rem;
+            position: relative;
+            border-left: 2px solid var(--border);
+            margin-bottom: 0.5rem;
+        }
+
+        .answer-list li:before {
+            content: '▸';
+            position: absolute;
+            left: 0.5rem;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .risk-list li {
+            border-left-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .risk-list li:before {
+            content: '⚠';
+            color: var(--danger);
+        }
     </style>
 </head>
 
@@ -552,7 +753,7 @@
 
         <div class="search-box">
             <textarea id="queryInput"
-                placeholder="e.g., Would a high speed coffee shop work in Williamsburg?"></textarea>
+                placeholder="e.g., Is there demand for a fast casual ramen shop in Midtown East?"></textarea>
             <button id="analyzeBtn">Analyze Market</button>
         </div>
 
@@ -562,53 +763,93 @@
         </div>
 
         <div id="results">
-            <div class="summary-card">
-                <h2>Market Analysis Summary</h2>
-                <p id="summaryText"></p>
+            <!-- Market Summary Section (Always Open) -->
+            <div class="collapsible-section">
+                <div class="section-header" onclick="toggleSection('marketSummary')">
+                    <h2>Market Analysis Summary</h2>
+                    <button class="toggle-btn" id="marketSummaryToggle">Hide ▲</button>
+                </div>
+                <div class="section-content" id="marketSummaryContent">
+                    <p id="summaryText"></p>
+                </div>
             </div>
 
-            <div class="heatmap-container">
-                <h2>Competitor Weakness Heatmap</h2>
-                <table id="heatmapTable">
-                    <thead>
-                        <!-- Dynamic Headers -->
-                    </thead>
-                    <tbody>
-                        <!-- Dynamic Rows -->
-                    </tbody>
-                </table>
-                <div class="legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: rgba(239, 68, 68, 0.8)"></div>
-                        <span>Weakness (1-2)</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: rgba(234, 179, 8, 0.8)"></div>
-                        <span>Average (3)</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: rgba(34, 197, 94, 0.8)"></div>
-                        <span>Strength (4-5)</span>
+            <!-- Competitor Heatmap Section (Collapsible) -->
+            <div class="collapsible-section">
+                <div class="section-header" onclick="toggleSection('heatmap')">
+                    <h2>Competitor Weakness Heatmap</h2>
+                    <button class="toggle-btn" id="heatmapToggle">Show ▼</button>
+                </div>
+                <div class="section-content" id="heatmapContent" style="display: none;">
+                    <table id="heatmapTable">
+                        <thead>
+                            <!-- Dynamic Headers -->
+                        </thead>
+                        <tbody>
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                    </table>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: rgba(239, 68, 68, 0.8)"></div>
+                            <span>Weakness (1-2)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: rgba(234, 179, 8, 0.8)"></div>
+                            <span>Average (3)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: rgba(34, 197, 94, 0.8)"></div>
+                            <span>Strength (4-5)</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Personas Section -->
-            <div class="personas-container" id="personasContainer" style="display: none;">
-                <h2>Customer Personas</h2>
-                <div class="personas-grid" id="personasGrid">
-                    <!-- Dynamic persona cards will be inserted here -->
+            <!-- Personas Section (Collapsible) -->
+            <div class="collapsible-section" id="personasContainer" style="display: none;">
+                <div class="section-header" onclick="toggleSection('personas')">
+                    <h2>Customer Personas</h2>
+                    <button class="toggle-btn" id="personasToggle">Show ▼</button>
+                </div>
+                <div class="section-content" id="personasContent" style="display: none;">
+                    <div class="personas-grid" id="personasGrid">
+                        <!-- Dynamic persona cards will be inserted here -->
+                    </div>
                 </div>
             </div>
 
-            <!-- Reviews Section -->
-            <div class="reviews-container" id="reviewsContainer" style="display: none;">
-                <div class="reviews-header" onclick="toggleReviews()">
-                    <h2>Customer Reviews <span class="review-count"></span></h2>
-                    <button class="toggle-btn" id="toggleBtn">Show Reviews ▼</button>
+            <!-- Reviews Section (Collapsible) -->
+            <div class="collapsible-section" id="reviewsContainer" style="display: none;">
+                <div class="section-header" onclick="toggleSection('reviews')">
+                    <h2>Customer Reviews <span class="review-count" id="reviewCount"></span></h2>
+                    <button class="toggle-btn" id="reviewsToggle">Show ▼</button>
                 </div>
-                <div class="reviews-content" id="reviewsContent" style="display: none;">
+                <div class="section-content" id="reviewsContent" style="display: none;">
                     <!-- Dynamic reviews will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Business Gap Analyzer Section (Collapsible) -->
+            <div class="collapsible-section" id="followupContainer" style="display: none;">
+                <div class="section-header" onclick="toggleSection('followup')">
+                    <h2>Business Gap Analyzer</h2>
+                    <button class="toggle-btn" id="followupToggle">Show ▼</button>
+                </div>
+                <div class="section-content" id="followupContent" style="display: none;">
+                    <p class="followup-intro">Ask anything about this market analysis and get strategic insights.</p>
+                    <div class="followup-input-section">
+                        <textarea id="followupQuestion" class="followup-textarea"
+                            placeholder="What would be the most effective way to capitalize on these market gaps?"></textarea>
+                        <button id="followupBtn" class="followup-btn">Analyze</button>
+                    </div>
+                    <div class="followup-loading" id="followupLoading">
+                        <div class="followup-spinner"></div>
+                        <span>Analyzing your question...</span>
+                    </div>
+                    <div class="followup-answer" id="followupAnswer">
+                        <div class="followup-answer-text" id="followupAnswerText"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -730,7 +971,187 @@
                 console.log('Personas not rendered - no personas data');
             }
 
+            // Initialize follow-up question section
+            initFollowUpSection(data);
+
             results.style.display = 'block';
+        }
+
+        // Global variable to store analysis context for follow-up questions
+        let analysisContext = null;
+
+        function initFollowUpSection(data) {
+            // Store the full context for follow-up questions
+            analysisContext = {
+                query: queryInput.value.trim(),
+                summary: data.summary,
+                businesses: data.competitors?.map(c => ({
+                    id: c.id,
+                    name: c.name,
+                    rating: c.yelpUrl ? 'N/A' : 'N/A',
+                    review_count: 'N/A',
+                    price: 'N/A'
+                })),
+                reviews: data.reviews || {},
+                personas: data.personas || []
+            };
+
+            // Generate a contextual follow-up question
+            const suggestedQuestion = generateFollowUpQuestion(data);
+
+            const followupQuestion = document.getElementById('followupQuestion');
+            const followupContainer = document.getElementById('followupContainer');
+            const followupAnswer = document.getElementById('followupAnswer');
+
+            // Reset the section
+            followupQuestion.value = suggestedQuestion;
+            followupQuestion.disabled = false;
+            followupAnswer.classList.remove('active');
+
+            // Show the container
+            followupContainer.style.display = 'block';
+        }
+
+        function generateFollowUpQuestion(data) {
+            const { summary, personas } = data;
+            const questions = [];
+
+            if (personas && personas.length > 0) {
+                const topPersona = personas[0];
+                questions.push(`How can I specifically address ${topPersona.name}'s pain points in my business model?`);
+                questions.push(`What marketing channels would resonate most with the identified customer personas?`);
+            }
+
+            if (summary) {
+                if (summary.toLowerCase().includes('gap') || summary.toLowerCase().includes('opportunity')) {
+                    questions.push("What would be the most effective way to capitalize on these market gaps?");
+                }
+                if (summary.toLowerCase().includes('price') || summary.toLowerCase().includes('pricing')) {
+                    questions.push("What pricing strategy would be most competitive in this market?");
+                }
+            }
+
+            // Default questions
+            questions.push("What are the biggest risks I should consider before entering this market?");
+            questions.push("How can I differentiate my business from existing competitors?");
+            questions.push("What initial steps should I take to validate this opportunity?");
+
+            return questions[0];
+        }
+
+        // Follow-up question handler
+        const followupBtn = document.getElementById('followupBtn');
+        const followupQuestion = document.getElementById('followupQuestion');
+        const followupLoading = document.getElementById('followupLoading');
+        const followupAnswer = document.getElementById('followupAnswer');
+        const followupAnswerText = document.getElementById('followupAnswerText');
+
+        followupBtn.addEventListener('click', async () => {
+            const question = followupQuestion.value.trim();
+            if (!question || !analysisContext) return;
+
+            // Update UI state
+            followupBtn.disabled = true;
+            followupQuestion.disabled = true;
+            followupLoading.classList.add('active');
+            followupAnswer.classList.remove('active');
+
+            try {
+                const apiUrl = window.location.hostname === 'localhost'
+                    ? 'http://localhost:3000/follow-up'
+                    : 'https://business-opportunity-finder-79171523011.us-central1.run.app/follow-up';
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        question,
+                        context: analysisContext
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to get answer');
+                }
+
+                const data = await response.json();
+
+                // Display the structured answer
+                if (data.answer && typeof data.answer === 'object') {
+                    renderStructuredAnswer(data.answer);
+                } else {
+                    // Fallback for plain text
+                    followupAnswerText.textContent = data.answer;
+                }
+                followupAnswer.classList.add('active');
+
+            } catch (error) {
+                alert('An error occurred while getting the answer. Please try again.');
+                console.error(error);
+                followupBtn.disabled = false;
+                followupQuestion.disabled = false;
+            } finally {
+                followupLoading.classList.remove('active');
+            }
+        });
+
+        // Render structured consulting-style answer
+        function renderStructuredAnswer(answer) {
+            const { mainInsight, keyMoves, risksToAvoid } = answer;
+
+            let html = '';
+
+            // Main Insight Section
+            if (mainInsight) {
+                html += `
+                    <div class="answer-section">
+                        <div class="answer-section-title">💡 Main Insight</div>
+                        <div class="answer-section-content">${mainInsight}</div>
+                    </div>
+                `;
+            }
+
+            // Key Moves Section
+            if (keyMoves && keyMoves.length > 0) {
+                html += `
+                    <div class="answer-section">
+                        <div class="answer-section-title">🎯 Key Moves</div>
+                        <ul class="answer-list">
+                            ${keyMoves.map(move => `<li>${move}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Risks to Avoid Section
+            if (risksToAvoid && risksToAvoid.length > 0) {
+                html += `
+                    <div class="answer-section">
+                        <div class="answer-section-title">⚠️ Risks to Avoid</div>
+                        <ul class="answer-list risk-list">
+                            ${risksToAvoid.map(risk => `<li>${risk}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            followupAnswerText.innerHTML = html;
+        }
+
+        // Toggle section visibility
+        function toggleSection(sectionName) {
+            const content = document.getElementById(`${sectionName}Content`);
+            const toggleBtn = document.getElementById(`${sectionName}Toggle`);
+
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggleBtn.textContent = 'Hide ▲';
+            } else {
+                content.style.display = 'none';
+                toggleBtn.textContent = 'Show ▼';
+            }
         }
 
         async function renderPersonas(personas) {
@@ -815,23 +1236,10 @@
             return svg;
         }
 
-        function toggleReviews() {
-            const content = document.getElementById('reviewsContent');
-            const btn = document.getElementById('toggleBtn');
-
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                btn.textContent = 'Hide Reviews ▲';
-            } else {
-                content.style.display = 'none';
-                btn.textContent = 'Show Reviews ▼';
-            }
-        }
-
         function renderReviews(reviews, competitors) {
             const container = document.getElementById('reviewsContainer');
             const content = document.getElementById('reviewsContent');
-            const countSpan = container.querySelector('.review-count');
+            const countSpan = document.getElementById('reviewCount');
 
             if (!reviews || Object.keys(reviews).length === 0) {
                 container.style.display = 'none';
@@ -869,7 +1277,7 @@
                 }
             });
 
-            countSpan.textContent = `(${totalReviews} reviews analyzed)`;
+            countSpan.textContent = `(${totalReviews} reviews)`;
             content.innerHTML = reviewsHTML;
             container.style.display = 'block';
         }

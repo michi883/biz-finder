@@ -4,7 +4,7 @@ const path = require('path');
 require('dotenv').config();
 
 const { queryYelpAI, fetchBusinessDetails, fetchReviews } = require('./services/yelp-ai-chat');
-const { analyzeResults } = require('./services/gemini');
+const { analyzeResults, answerFollowUpQuestion, generateFollowUpQuestion } = require('./services/gemini');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -81,6 +81,24 @@ app.post('/analyze', async (req, res) => {
     } catch (error) {
         console.error('Analysis failed:', error);
         res.status(500).json({ error: 'Failed to analyze market opportunity.' });
+    }
+});
+
+app.post('/follow-up', async (req, res) => {
+    const { question, context } = req.body;
+
+    if (!question || !context) {
+        return res.status(400).json({ error: 'Question and context are required' });
+    }
+
+    console.log(`Received follow-up question: ${question}`);
+
+    try {
+        const answer = await answerFollowUpQuestion(question, context);
+        res.json({ answer });
+    } catch (error) {
+        console.error('Follow-up question failed:', error);
+        res.status(500).json({ error: 'Failed to answer follow-up question.' });
     }
 });
 

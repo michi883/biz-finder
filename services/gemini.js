@@ -172,4 +172,190 @@ const analyzeResults = async (businesses, userQuery, yelpResponse = '', reviews 
   }
 };
 
-module.exports = { analyzeResults };
+const answerFollowUpQuestion = async (question, context) => {
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    // Build a comprehensive context from the analysis data
+    const { query, businesses, reviews, personas, summary } = context;
+
+    let contextText = `Original user query: "${query}"\n\nMarket Analysis Summary: ${summary}\n\n`;
+
+    // Add business information
+    if (businesses && businesses.length > 0) {
+      contextText += `Competitors analyzed:\n`;
+      businesses.forEach((b, idx) => {
+        contextText += `${idx + 1}. ${b.name} - Rating: ${b.rating}, Reviews: ${b.review_count}, Price: ${b.price || 'N/A'}\n`;
+      });
+      contextText += '\n';
+    }
+
+    // Add review insights
+    if (reviews && Object.keys(reviews).length > 0) {
+      contextText += `Customer review insights:\n`;
+      Object.keys(reviews).forEach(businessId => {
+        const businessReviews = reviews[businessId];
+        const business = businesses.find(b => b.id === businessId);
+        if (businessReviews.length > 0 && business) {
+          contextText += `\n${business.name}:\n`;
+          businessReviews.slice(0, 3).forEach((review, idx) => {
+            contextText += `  - "${review.text.substring(0, 150)}..."\n`;
+          });
+        }
+      });
+      contextText += '\n';
+    }
+
+    // Add persona information
+    if (personas && personas.length > 0) {
+      contextText += `Customer Personas identified:\n`;
+      personas.forEach((p, idx) => {
+        contextText += `${idx + 1}. ${p.name} - ${p.demographic}\n`;
+        if (p.goals && p.goals.length > 0) {
+          contextText += `   Goals: ${p.goals.join(', ')}\n`;
+        }
+        if (p.painPoints && p.painPoints.length > 0) {
+          contextText += `   Pain Points: ${p.painPoints.map(pp => pp.point).join(', ')}\n`;
+        }
+      });
+    }
+
+    const prompt = `
+You are a Business Opportunity Analyst providing consulting-style insights. Based on the market analysis context below, answer the following question in a structured, professional format.
+
+${contextText}
+
+User's follow-up question: "${question}"
+
+Provide your answer in EXACTLY the following consulting-style structure. Return ONLY valid JSON with NO additional text:
+
+{
+  "mainInsight": "A 2-3 sentence key insight that directly answers the question. Be specific and reference data from the analysis.",
+  "keyMoves": [
+    "First actionable step or strategy (1-2 sentences)",
+    "Second actionable step or strategy (1-2 sentences)",
+    "Third actionable step or strategy (1-2 sentences)"
+  ],
+  "risksToAvoid": [
+    "First risk or pitfall to avoid (1-2 sentences)",
+    "Second risk or pitfall to avoid (1-2 sentences)"
+  ]
+}
+
+CRITICAL: Return ONLY the JSON object, no markdown code blocks, no explanatory text.
+    `;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    // Parse JSON response
+    let cleanText = text
+      .replace(/```json/g, '')
+      .replace(/```/g, '')
+      .trim();
+
+    // Try to extract JSON object using regex
+    const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
+
+    if (jsonMatch) {
+      try {
+        const parsedResponse = JSON.parse(jsonMatch[0]);
+        console.log('✅ Follow-up question answered with structured format');
+        console.log('📊 Structured response:', JSON.stringify(parsedResponse, null, 2));
+        return parsedResponse;
+      } catch (parseError) {
+        console.error('❌ JSON parse error:', parseError.message);
+        console.log('📄 Attempting to extract structure from text...');
+        // Fall through to text extraction
+      }
+    }
+
+    // Fallback: Extract structure from plain text response
+    console.log('⚠️ No valid JSON found, attempting to parse plain text structure');
+
+    // Try to parse as plain text with section headers
+    const structuredResponse = {
+      mainInsight: '',
+      keyMoves: [],
+      risksToAvoid: []
+    };
+
+    // Look for common section patterns
+    const mainInsightMatch = text.match(/(?:Main Insight|Key Insight)[:\s\n]+(.+?)(?=\n\n|Key Moves|$)/is);
+    const keyMovesMatch = text.match(/Key Moves[:\s\n]+([\s\S]+?)(?=\n\n|Risks to Avoid|$)/i);
+    const risksMatch = text.match(/Risks to Avoid[:\s\n]+([\s\S]+?)$/i);
+
+    if (mainInsightMatch) {
+      structuredResponse.mainInsight = mainInsightMatch[1].trim();
+    } else {
+      // If no sections found, use first paragraph as main insight
+      const paragraphs = text.split('\n\n').filter(p => p.trim());
+      if (paragraphs.length > 0) {
+        structuredResponse.mainInsight = paragraphs[0].trim();
+      }
+    }
+
+    if (keyMovesMatch) {
+      const movesList = keyMovesMatch[1];
+      const moves = movesList.split(/\n+/).filter(line => line.trim() && (line.match(/^[\d\-\*•]/) || line.length > 20));
+      structuredResponse.keyMoves = moves.map(m => m.replace(/^[\d\-\*•.\s]+/, '').trim()).filter(m => m);
+    }
+
+    if (risksMatch) {
+      const risksList = risksMatch[1];
+      const risks = risksList.split(/\n+/).filter(line => line.trim() && (line.match(/^[\d\-\*•]/) || line.length > 20));
+      structuredResponse.risksToAvoid = risks.map(r => r.replace(/^[\d\-\*•.\s]+/, '').trim()).filter(r => r);
+    }
+
+    // If we have at least some structure, return it
+    if (structuredResponse.mainInsight || structuredResponse.keyMoves.length > 0) {
+      console.log('✅ Extracted structured format from text');
+      return structuredResponse;
+    }
+
+    // Last resort: return the full text as main insight
+    console.log('⚠️ Using fallback: entire response as main insight');
+    return {
+      mainInsight: text.trim(),
+      keyMoves: [],
+      risksToAvoid: []
+    };
+
+  } catch (error) {
+    console.error("❌ Error answering follow-up question:", error);
+    throw new Error("Failed to answer follow-up question");
+  }
+};
+
+const generateFollowUpQuestion = (context) => {
+  const { query, personas, summary } = context;
+
+  // Generate a thoughtful follow-up question based on the analysis
+  const questions = [];
+
+  if (personas && personas.length > 0) {
+    const topPersona = personas[0];
+    questions.push(`How can I specifically address ${topPersona.name}'s pain points in my business model?`);
+    questions.push(`What marketing channels would resonate most with the identified customer personas?`);
+  }
+
+  if (summary) {
+    if (summary.toLowerCase().includes('gap') || summary.toLowerCase().includes('opportunity')) {
+      questions.push("What would be the most effective way to capitalize on these market gaps?");
+    }
+    if (summary.toLowerCase().includes('price') || summary.toLowerCase().includes('pricing')) {
+      questions.push("What pricing strategy would be most competitive in this market?");
+    }
+  }
+
+  // Default questions
+  questions.push("What are the biggest risks I should consider before entering this market?");
+  questions.push("How can I differentiate my business from existing competitors?");
+  questions.push("What initial steps should I take to validate this opportunity?");
+
+  // Return the first (most relevant) question
+  return questions[0];
+};
+
+module.exports = { analyzeResults, answerFollowUpQuestion, generateFollowUpQuestion };
